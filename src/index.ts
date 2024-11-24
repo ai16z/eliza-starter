@@ -83,22 +83,6 @@ export async function loadCharacters(
 
         validateCharacterConfig(character);
 
-        // is there a "plugins" field?
-        if (character.plugins) {
-          console.log("Plugins are: ", character.plugins);
-
-          const importedPlugins = await Promise.all(
-            character.plugins.map(async (plugin) => {
-              // if the plugin name doesnt start with @eliza,
-
-              const importedPlugin = await import(plugin);
-              return importedPlugin;
-            })
-          );
-
-          character.plugins = importedPlugins;
-        }
-
         loadedCharacters.push(character);
       } catch (e) {
         console.error(`Error loading character from ${path}: ${e}`);
@@ -301,11 +285,11 @@ const startAgents = async () => {
   let charactersArg = args.characters || args.character;
 
   let characters = [character];
-
+  console.log("charactersArg", charactersArg);
   if (charactersArg) {
     characters = await loadCharacters(charactersArg);
   }
-
+  console.log("characters", characters);
   try {
     for (const character of characters) {
       await startAgent(character, directClient as DirectClient);
